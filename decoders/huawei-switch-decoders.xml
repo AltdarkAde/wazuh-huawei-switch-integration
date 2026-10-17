@@ -1,0 +1,50 @@
+<!-- Add to /var/ossec/etc/decoders/local_decoder.xml -->
+
+<!-- BASE HUAWEI -->
+<decoder name="huawei-switch">
+  <prematch>HUAWEI</prematch>
+</decoder>
+
+<!-- ========================= -->
+<!-- AUTHENTICATION PARSING    -->
+<!-- ========================= -->
+<decoder name="huawei-auth-details">
+  <parent>huawei-switch</parent>
+  <prematch>ADMIN_USER_ACCESSRESULT</prematch>
+  <regex>USER:([^;]+);.*IPADDRESS:([^;]+);.*ERRCODE:(\d+);RESULT:([^;]+);.*ACCESS TYPE:([^;]+);</regex>
+  <order>user, srcip, errcode, result, protocol</order>
+</decoder>
+
+<!-- ========================= -->
+<!-- SSH EVENTS                -->
+<!-- ========================= -->
+<decoder name="huawei-ssh-fail">
+  <parent>huawei-switch</parent>
+  <prematch>SSH_USER_LOGIN_FAIL</prematch>
+</decoder>
+
+<decoder name="huawei-ssh-success">
+  <parent>huawei-switch</parent>
+  <prematch>SSH_USER_LOGIN\(s\)</prematch>
+</decoder>
+
+<!-- ========================= -->
+<!-- QOS EVENTS                -->
+<!-- ========================= -->
+<decoder name="huawei-qos-active">
+  <parent>huawei-switch</parent>
+  <prematch>hwXQoSPacketsDropInterfaceAlarm_active</prematch>
+</decoder>
+
+<decoder name="huawei-qos-clear">
+  <parent>huawei-switch</parent>
+  <prematch>hwXQoSPacketsDropInterfaceAlarm_clear</prematch>
+</decoder>
+
+<!-- ========================= -->
+<!-- CONFIG / CLI EVENTS       -->
+<!-- ========================= -->
+<decoder name="huawei-cli">
+  <parent>huawei-switch</parent>
+  <prematch>CLI/|SHELL/|CFG/|CONFIG</prematch>
+</decoder>

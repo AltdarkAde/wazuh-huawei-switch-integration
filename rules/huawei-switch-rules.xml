@@ -1,0 +1,62 @@
+<!-- Add to /var/ossec/etc/rules/local_rules.xml -->
+<group name="huawei,network,security,">
+
+  <!-- BASE RULE -->
+  <rule id="110001" level="3">
+    <decoded_as>huawei-switch</decoded_as>
+    <description>Huawei device log detected</description>
+  </rule>
+
+  <!-- AUTHENTICATION (STRUCTURED) -->
+  <rule id="110002" level="5">
+    <decoded_as>huawei-auth-details</decoded_as>
+    <field name="result">success</field>
+    <description>Huawei Admin Login Success</description>
+    <group>huawei,authentication,success</group>
+  </rule>
+
+  <rule id="110003" level="10">
+    <decoded_as>huawei-auth-details</decoded_as>
+    <field name="result">Authentication fail</field>
+    <description>Huawei Admin Login Failed</description>
+    <group>huawei,authentication,failed,attack</group>
+  </rule>
+
+  <!-- SSH RAW EVENTS -->
+  <rule id="110020" level="8">
+    <if_sid>110001</if_sid>
+    <match>SSH_USER_LOGIN_FAIL</match>
+    <description>Huawei SSH Login Failed (raw)</description>
+    <group>huawei,authentication,attack</group>
+  </rule>
+
+  <rule id="110021" level="5">
+    <if_sid>110001</if_sid>
+    <match>SSH_USER_LOGIN\(s\)</match>
+    <description>Huawei SSH Login Success (raw)</description>
+    <group>huawei,authentication,audit</group>
+  </rule>
+
+  <!-- QOS EVENTS -->
+  <rule id="110010" level="10">
+    <if_sid>110001</if_sid>
+    <match>hwXQoSPacketsDropInterfaceAlarm_active</match>
+    <description>Huawei Interface Packet Drop ACTIVE</description>
+    <group>huawei,qos,network</group>
+  </rule>
+
+  <rule id="110011" level="5">
+    <if_sid>110001</if_sid>
+    <match>hwXQoSPacketsDropInterfaceAlarm_clear</match>
+    <description>Huawei Interface Recovery from Packet Drop</description>
+    <group>huawei,qos,network</group>
+  </rule>
+
+  <!-- CONFIG CHANGE (CRITICAL) -->
+  <rule id="110030" level="12">
+    <decoded_as>huawei-cli</decoded_as>
+    <description>Huawei Configuration Change Detected</description>
+    <group>huawei,configuration,critical</group>
+  </rule>
+
+</group>
